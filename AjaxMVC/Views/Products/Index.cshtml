@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Product Search</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+    <h2>Search for Products</h2>
+
+    <input type="text" id="searchTerm" placeholder="Enter product name" />
+
+    <button id="searchButton">Search</button>
+
+    <ul id="results"></ul>
+
+    <script>
+        $(document).ready(function() {
+            $('#searchButton').click(function() {
+                var term = $('#searchTerm').val();
+
+                if (!term.trim()) {
+                    alert('Please enter a search term!');
+                    return;
+                }
+
+                
+                $.ajax({
+                    url: '/Products/Search',
+                    type: 'GET',
+                    data: { term: term },
+                    success: function(response) {
+                        $('#results').empty(); 
+
+                        if (response.success && response.data.length > 0) {
+                            $.each(response.data, function(index, product) {
+                                $('#results').append('<li>' + product.name + ' - $' + product.price + '</li>');
+                            });
+                        } else {
+                            $('#results').append('<li>No products found.</li>');
+                        }
+                    },
+                    error: function() {
+                        $('#results').empty().append('<li>Error retrieving products.</li>');
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
